@@ -1,8 +1,9 @@
 package ru.AnaK.RSA.model.RSA;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class OpenKey {
+public class OpenKey implements Serializable {
     private BigInteger n;
     private BigInteger e;
     private boolean status = false;

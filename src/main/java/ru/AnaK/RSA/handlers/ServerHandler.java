@@ -29,6 +29,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         if (openKey.getStatus()){
             clientOpenKey = openKey;
             nettySerializer.writeToChannel(ctx, pairKeys.getOpenKey());
+            log.info("Server send OpenKey");
         } else {
             String str = nettySerializer.deserializeObjectToM(o);
             if ( ! str.isEmpty()){

@@ -16,7 +16,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     private final NettySerializer nettySerializer = new NettySerializer();
     private final PairKeys pairKeys;
     private final FunctionsRSA functionsRSA;
-    private OpenKey serverOpenKey;
 
     public ClientHandler(BigInteger p, BigInteger q){
         functionsRSA = new FunctionsRSA(p, q);
@@ -34,14 +33,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object o) throws IOException, ClassNotFoundException {
         OpenKey openKey = nettySerializer.deserializeObjectToOK(o);
         if (openKey.getStatus()){
-            serverOpenKey = openKey;
-            nettySerializer.writeToChannel(ctx, functionsRSA.encrypt(serverOpenKey, "Example1"));
+            nettySerializer.writeToChannel(ctx, functionsRSA.encrypt(openKey, "Example1"));
+            log.info("Client get OpenKey from Server\nClient encrypt and send message");
         } else {
             String str = nettySerializer.deserializeObjectToM(o);
             if ( ! str.isEmpty()){
                 if ("Connection is active".equals(str)){
-                    log.info("Connection is active");
                     nettySerializer.writeToChannel(ctx, pairKeys.getOpenKey());
+                    log.info("Connection is active\nClient send OpenKey");
                 }
             } else {
                 BigInteger[] encryptedMessage = nettySerializer.deserializeObjectToEncrM(o);

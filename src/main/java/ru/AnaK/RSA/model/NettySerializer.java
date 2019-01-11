@@ -8,7 +8,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.logging.Logger;
 
-public class NettySerializer implements Serializable{
+public class NettySerializer{
     private static final Logger log = Logger.getLogger(NettySerializer.class.getName());
 
     public void writeToChannel(ChannelHandlerContext ctx, Object o) {
@@ -53,7 +53,7 @@ public class NettySerializer implements Serializable{
     }
 
     private byte[] serialize(final Object o) throws IOException{
-        log.info("Object serialize..");
+        //log.info("Object serialize..");
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
             objectOutputStream.writeObject(o);
@@ -62,7 +62,7 @@ public class NettySerializer implements Serializable{
     }
 
     private Object deserialize(final byte[] bytes) throws IOException, ClassNotFoundException {
-        log.info("Object deserialize..");
+        //log.info("Object deserialize..");
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
              ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
             return objectInputStream.readObject();
@@ -74,6 +74,7 @@ public class NettySerializer implements Serializable{
             ByteBuf byteBuf = (ByteBuf) o;
             byteBuf.resetReaderIndex();
             final int messageLength = byteBuf.readInt();
+            log.info(String.valueOf(messageLength));
             byte byteArray[] = new byte[messageLength];
             byteBuf.readBytes(byteArray, 0, messageLength);
             return deserialize(byteArray);
